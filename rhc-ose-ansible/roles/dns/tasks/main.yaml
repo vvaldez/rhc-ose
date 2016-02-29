@@ -1,0 +1,21 @@
+---
+- name: Install bind and bind-utils
+  yum: pkg={{item}} state=installed
+  with_items:
+   - bind
+   - bind-utils
+
+- name: Enable & Start named
+  service: name=named enabled=yes state=started
+
+- name: Install firewalld
+  yum: name=firewalld state=latest
+
+- name: Enable firewalld
+  service: name=firewalld enabled=yes state=started
+
+- name: Open Firewall for DNS
+  firewalld: port={{item}} permanent=yes state=enabled immediate=yes
+  with_items:
+   - 53/tcp
+   - 53/udp

@@ -1,0 +1,19 @@
+---
+- hosts: localhost
+  pre_tasks:
+  - include: roles/common/pre_tasks/pre_tasks.yml
+  roles:
+    - role: common
+    - role: openshift-common
+    # Provision Master
+    - role: openstack-create
+      type: "dns"
+      key_name: "{{ openstack_key_name }}"
+      image_name: "ose3_1-base"
+      flavor_name: "{{ openshift_openstack_flavor_name }}"
+      security_groups: "dns,default"
+      register_host_group: "dns"
+      node_count: "1"
+- hosts: dns
+  roles:
+    - role: dns
